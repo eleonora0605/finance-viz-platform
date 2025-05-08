@@ -80,6 +80,7 @@ finance-viz-platform/
 │   │   ├── indicators.py    # Financial indicators calculation
 │   │   └── insights.py      # Financial insights generation
 │   ├── data/               # Data processing
+│   │   ├── financials_103_to_113/
 │   │   ├── __init__.py
 │   │   ├── loader.py       # Data loading and caching
 │   │   └── processor.py    # Data processing utilities
