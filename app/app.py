@@ -61,10 +61,11 @@ st.markdown("""
 # 財務數據類
 class FinancialData:
     def __init__(self):
-        self.csv_path = "/workspaces/finance-viz-platform/finance_analyzer/data/selected_companies_financials_cleaned.csv"
+        self.csv_path = "/workspaces/finance-viz-platform/app/selected_companies_financials_cleaned.csv"
         self.companies = self._load_data()
         self.risk_highlight = self._risk_highlight_data()
-        self.metric_names = self._metric_names()
+        self.metric_names = self._metric_names()  # 確保這裡正確呼叫 _metric_names
+        self.years = self._years()
 
     def _load_data(self):
         # 讀取 CSV 檔案
@@ -75,7 +76,7 @@ class FinancialData:
         for company, group in grouped:
             company_data = {
                 "code": str(group["公司代號"].iloc[0]),
-                "revenue_growth": group.set_index("年份")["營收成長(%)"].to_dict(),
+                "revenue_growth": group.set_index("年份")["成長能力-營收成長率(%)"].to_dict(),
                 "profit_margin": group.set_index("年份")["獲利能力-純益率(%)"].to_dict(),
                 "roe": group.set_index("年份")["獲利能力-權益報酬率(%)"].to_dict(),
                 "debt_ratio": group.set_index("年份")["財務結構-負債佔資產比率(%)"].to_dict(),
@@ -84,96 +85,11 @@ class FinancialData:
             companies[company] = company_data
 
         return companies
-        # 初始化餐飲業公司財務數據
-        self.companies = {
-            "美食-KY(85度C)": {
-                "code": "2723",
-                "revenue_growth": {
-                    "103": 8.5, "104": 10.2, "105": 7.8, "106": 5.5, "107": 3.2, 
-                    "108": 2.1, "109": -5.8, "110": 4.2, "111": 8.5, "112": 6.2, "113": 7.5
-                },
-            },
-            "瓦城": {
-                "code": "2729",
-                "revenue_growth": {
-                    "103": 15.8, "104": 18.5, "105": 20.2, "106": 22.5, "107": 18.5, 
-                    "108": 12.5, "109": -8.5, "110": 5.2, "111": 15.8, "112": 18.5, "113": 20.2
-                }
-            },
-            "王品": {
-                "code": "2727",
-                "revenue_growth": {
-                    "103": 12.5, "104": 10.8, "105": 8.5, "106": 5.2, "107": 3.5, 
-                    "108": 2.8, "109": -12.5, "110": -5.2, "111": 8.5, "112": 12.5, "113": 15.8
-                },
-                "profit_margin": {
-                    "103": 10.5, "104": 9.8, "105": 8.5, "106": 7.2, "107": 6.5, 
-                    "108": 5.2, "109": 2.5, "110": 3.8, "111": 6.5, "112": 8.2, "113": 9.5
-                },
-                "roe": {
-                    "103": 20.5, "104": 18.2, "105": 16.5, "106": 14.2, "107": 12.5, 
-                    "108": 10.2, "109": 5.5, "110": 7.8, "111": 12.5, "112": 16.2, "113": 18.5
-                },
-                "debt_ratio": {
-                    "103": 32.5, "104": 35.2, "105": 38.5, "106": 40.2, "107": 42.5, 
-                    "108": 45.8, "109": 48.5, "110": 46.2, "111": 43.5, "112": 40.2, "113": 38.5
-                },
-                "eps": {
-                    "103": 6.52, "104": 5.85, "105": 5.25, "106": 4.52, "107": 3.95, 
-                    "108": 3.25, "109": 1.52, "110": 2.25, "111": 3.85, "112": 5.25, "113": 6.15
-                }
-            },
-            "漢來美食": {
-                "code": "1268",
-                "revenue_growth": {
-                    "103": 22.5, "104": 25.8, "105": 28.5, "106": 30.2, "107": 25.5, 
-                    "108": 20.8, "109": -2.5, "110": 8.5, "111": 15.2, "112": 18.5, "113": 22.5
-                },
-                "profit_margin": {
-                    "103": 8.5, "104": 9.2, "105": 10.5, "106": 11.2, "107": 10.5, 
-                    "108": 9.2, "109": 5.5, "110": 7.2, "111": 8.5, "112": 9.8, "113": 10.5
-                },
-                "roe": {
-                    "103": 18.5, "104": 20.2, "105": 22.5, "106": 24.8, "107": 22.5, 
-                    "108": 18.5, "109": 10.2, "110": 14.5, "111": 16.8, "112": 19.5, "113": 22.8
-                },
-                "debt_ratio": {
-                    "103": 40.5, "104": 42.8, "105": 45.5, "106": 48.2, "107": 50.5, 
-                    "108": 52.8, "109": 55.5, "110": 52.2, "111": 48.5, "112": 45.2, "113": 42.5
-                },
-                "eps": {
-                    "103": 4.25, "104": 4.85, "105": 5.52, "106": 6.25, "107": 5.85, 
-                    "108": 4.95, "109": 2.85, "110": 3.95, "111": 4.65, "112": 5.45, "113": 6.25
-                }
-            },
-            "六角": {
-                "code": "2732",
-                "revenue_growth": {
-                    "103": 18.5, "104": 20.2, "105": 22.5, "106": 24.8, "107": 20.5, 
-                    "108": 15.2, "109": -5.5, "110": 3.8, "111": 10.5, "112": 15.2, "113": 18.5
-                },
-                "profit_margin": {
-                    "103": 11.5, "104": 12.8, "105": 14.5, "106": 15.8, "107": 14.5, 
-                    "108": 12.2, "109": 6.5, "110": 8.5, "111": 10.2, "112": 12.5, "113": 14.2
-                },
-                "roe": {
-                    "103": 21.5, "104": 23.8, "105": 26.5, "106": 28.8, "107": 25.5, 
-                    "108": 20.2, "109": 10.5, "110": 14.8, "111": 18.5, "112": 22.2, "113": 25.5
-                },
-                "debt_ratio": {
-                    "103": 35.5, "104": 38.2, "105": 40.5, "106": 42.8, "107": 45.5, 
-                    "108": 48.2, "109": 50.5, "110": 48.2, "111": 45.5, "112": 42.8, "113": 40.5
-                },
-                "eps": {
-                    "103": 5.85, "104": 6.52, "105": 7.25, "106": 8.15, "107": 7.52, 
-                    "108": 6.25, "109": 3.25, "110": 4.52, "111": 5.85, "112": 7.25, "113": 8.52
-                }
-            }
-        }
+        
     def _risk_highlight_data(self):
-        """初始化風險與亮點分析數據"""
-        self.risk_highlight = {
-            "85度C": {
+        #初始化風險與亮點分析數據
+        return {
+            "美食-KY": {
                 "111": {
                     "risks": [
                         "原物料成本上升壓縮利潤",
@@ -287,7 +203,7 @@ class FinancialData:
                     ]
                 }
             },
-            "美食達人": {
+            "漢來美食": {
                 "111": {
                     "risks": [
                         "快速擴張帶來的管理風險",
@@ -325,7 +241,7 @@ class FinancialData:
                     ]
                 }
             },
-            "六角國際": {
+            "六角": {
                 "111": {
                     "risks": [
                         "咖啡市場競爭激烈",
@@ -365,9 +281,8 @@ class FinancialData:
             }
         }
     def _metric_names(self):
-        """初始化指標名稱"""
-        # 指標中文名稱對照
-        self.metric_names = {
+        #初始化指標名稱
+        return{
             "revenue_growth": "營收成長率 (%)",
             "profit_margin": "淨利率 (%)",
             "roe": "股東權益報酬率 (%)",
@@ -375,8 +290,10 @@ class FinancialData:
             "eps": "每股盈餘 (元)"
         }
         
+    def _years(self):
         # 年度列表
         self.years = ["103", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113"]
+        return self.years
     
     def get_company_names(self):
         """獲取所有公司名稱"""
@@ -401,12 +318,12 @@ class FinancialData:
         else:  # 10年
             selected_years = self.years[-10:]
         
-        return {year: self.companies[company_name][metric][year] for year in selected_years}
+        return {year: self.companies[company_name][metric].get(str(year), 0) for year in selected_years}
     
     def get_risk_highlight(self, company_name, year):
         """獲取風險與亮點分析"""
-        if company_name in self.risk_highlight_data and year in self.risk_highlight_data[company_name]:
-            return self.risk_highlight_data[company_name][year]
+        if company_name in self.risk_highlight and year in self.risk_highlight[company_name]:
+            return self.risk_highlight[company_name][year]
         else:
             return {"risks": ["無該年度風險資料"], "highlights": ["無該年度亮點資料"]}
 
@@ -427,7 +344,7 @@ class ChartGenerator:
         
         for company in selected_companies:
             data = self.financial_data.get_data_for_years(company, metric, years_range)
-            values = [data[year] for year in selected_years]
+            values = [data.get(year, None) for year in selected_years]
             
             fig.add_trace(go.Scatter(
                 x=selected_years,
@@ -469,8 +386,8 @@ class ChartGenerator:
         comparison_data = []
         
         for metric in metrics:
-            current_value = self.financial_data.companies[company][metric][year]
-            prev_value = self.financial_data.companies[company][metric][prev_year]
+            current_value = self.financial_data.companies[company][metric].get(year,0)
+            prev_value = self.financial_data.companies[company][metric].get(prev_year,0)
             change = current_value - prev_value
             change_percent = (change / prev_value * 100) if prev_value != 0 else 0
             
@@ -509,12 +426,16 @@ class FinancialAnalysisApp:
         st.sidebar.markdown("### 選擇分析參數")
         
         # 公司多選
+        company_names = self.financial_data.get_company_names()
+        if not company_names:
+            st.error("無可用的公司資料")
+            return
         selected_companies = st.sidebar.multiselect(
             "選擇感興趣的公司",
-            self.financial_data.get_company_names(),
-            default=[self.financial_data.get_company_names()[0]]
+            company_names,
+            default=[company_names[0]] if company_names else []
         )
-        
+
         # 時間範圍選擇
         years_range = st.sidebar.radio(
             "選擇時間範圍",
@@ -557,15 +478,14 @@ class FinancialAnalysisApp:
         
         with col2:
             # 年度選擇
-            if years_range == 5:
-                available_years = self.financial_data.get_years()[-5:]
-            else:
-                available_years = self.financial_data.get_years()[-10:]
-            
+            available_years = self.financial_data.get_years()[-5:] if years_range == 5 else self.financial_data.get_years()[-10:]
+            if not available_years:
+                st.warning("無可用的年度資料")
+                return
             selected_year = st.selectbox(
                 "選擇年度",
                 available_years,
-                index=len(available_years)-1,
+                index=len(available_years)-1 if available_years else 0,
                 format_func=lambda x: f"{x}年",
                 key="year_detail"
             )
@@ -618,7 +538,7 @@ class FinancialAnalysisApp:
         st.markdown("#### 公司基本資訊")
         
         company_info = {
-            "85度C": {
+            "美食-KY": {
                 "full_name": "美食-KY",
                 "industry": "連鎖咖啡烘焙",
                 "founded": "2004年",
@@ -639,14 +559,14 @@ class FinancialAnalysisApp:
                 "stores": "超過400家門市",
                 "description": "台灣知名連鎖餐飲集團，旗下擁有王品牛排、陶板屋、西堤、夏慕尼等多個品牌。"
             },
-            "美食達人": {
-                "full_name": "美食達人股份有限公司",
+            "漢來美食": {
+                "full_name": "漢來美食股份有限公司",
                 "industry": "連鎖餐飲",
                 "founded": "1996年",
                 "stores": "超過200家門市",
                 "description": "以平價美食聞名，旗下擁有多個中式、日式、西式餐飲品牌，主打年輕消費族群。"
             },
-            "六角國際": {
+            "六角": {
                 "full_name": "六角國際事業股份有限公司",
                 "industry": "連鎖咖啡餐飲",
                 "founded": "1998年",
